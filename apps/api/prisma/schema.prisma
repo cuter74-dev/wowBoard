@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Provider {
+  NAVER
+  KAKAO
+  GOOGLE
+  APPLE
+  GUEST
+}
+
+model User {
+  id            String         @id @default(cuid())
+  provider      Provider
+  providerId    String
+  email         String?
+  name          String?
+  avatarUrl     String?
+  createdAt     DateTime       @default(now())
+  projects      Project[]
+  aiCredentials AiCredential[]
+
+  @@unique([provider, providerId])
+}
+
+enum AiProvider {
+  OPENAI
+  ANTHROPIC
+  GEMINI
+  LOCAL
+}
+
+model AiCredential {
+  id        String     @id @default(cuid())
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider  AiProvider
+  keyCipher String     // AES-256-GCM ciphertext (ivB64:tagB64:ctB64); empty allowed for LOCAL
+  baseUrl   String?
+  model     String?
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@unique([userId, provider])
+}
+
+model Project {
+  id            String   @id @default(cuid())
+  ownerId       String
+  owner         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  title         String
+  description   String?
+  shareToken    String?  @unique
+  defaultWidth  Int      @default(390)
+  defaultHeight Int      @default(844)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  screens       Screen[]
+
+  @@index([ownerId])
+}
+
+model Screen {
+  id        String    @id @default(cuid())
+  projectId String
+  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  order     Int       @default(0)
+  width     Int       @default(390)
+  height    Int       @default(844)
+  elements  Element[]
+
+  @@index([projectId])
+}
+
+model Element {
+  id       String @id @default(cuid())
+  screenId String
+  screen   Screen @relation(fields: [screenId], references: [id], onDelete: Cascade)
+  type     String
+  x        Int
+  y        Int
+  width    Int
+  height   Int
+  zIndex   Int    @default(0)
+  props    Json
+
+  @@index([screenId])
+}

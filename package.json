@@ -1,0 +1,21 @@
+{
+  "name": "wowboard",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Oven-like screen wireframe/planning web solution",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n api,web -c blue,green \"npm run dev -w @wowboard/api\" \"npm run dev -w @wowboard/web\"",
+    "build": "npm run build -w @wowboard/shared && npm run build -w @wowboard/api && npm run build -w @wowboard/web",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down",
+    "prisma:migrate": "npm run prisma:migrate -w @wowboard/api",
+    "prisma:generate": "npm run prisma:generate -w @wowboard/api"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}

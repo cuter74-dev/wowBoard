@@ -1,0 +1,9 @@
+node_modules/
+dist/
+build/
+.env
+*.local
+apple-key.p8
+*.log
+.DS_Store
+apps/api/prisma/migrations/dev.db

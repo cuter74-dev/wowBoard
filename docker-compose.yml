@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: wowboard-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: wowboard
+      POSTGRES_PASSWORD: wowboard
+      POSTGRES_DB: wowboard
+    ports:
+      - "7432:5432"
+    volumes:
+      - wowboard_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U wowboard"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  wowboard_pgdata:

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Project" ADD COLUMN     "defaultHeight" INTEGER NOT NULL DEFAULT 844,
+ADD COLUMN     "defaultWidth" INTEGER NOT NULL DEFAULT 390;
