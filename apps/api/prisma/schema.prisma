@@ -25,8 +25,22 @@ model User {
   createdAt     DateTime       @default(now())
   projects      Project[]
   aiCredentials AiCredential[]
+  templates     Template[]
 
   @@unique([provider, providerId])
+}
+
+model Template {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name      String
+  width     Int
+  height    Int
+  elements  Json
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 enum AiProvider {

@@ -19,6 +19,15 @@ export interface AiScreenResult {
   elements: ElementInput[];
 }
 
+export interface UserTemplate {
+  id: string;
+  name: string;
+  width: number;
+  height: number;
+  elements: ElementInput[];
+  createdAt: string;
+}
+
 // API runs on port 7000 on the SAME host the web is served from. This makes
 // the app work whether opened as localhost or via a remote domain
 // (e.g. http://dev.brainsp.com:7100 → API at http://dev.brainsp.com:7000),
@@ -113,6 +122,21 @@ export const api = {
     }),
   getShared: (token: string) =>
     request<ProjectDetail>(`/share/${token}`),
+
+  // user templates
+  getTemplates: () => request<UserTemplate[]>('/templates'),
+  createTemplate: (data: {
+    name: string;
+    width: number;
+    height: number;
+    elements: ElementInput[];
+  }) =>
+    request<UserTemplate>('/templates', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  deleteTemplate: (id: string) =>
+    request<{ ok: boolean }>(`/templates/${id}`, { method: 'DELETE' }),
 
   // ai
   getAiProviders: () => request<AiProviderKind[]>('/ai/providers'),
