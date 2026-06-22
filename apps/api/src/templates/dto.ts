@@ -18,3 +18,10 @@ export class CreateTemplateDto {
   @IsArray()
   elements!: ElementInput[];
 }
+
+export class UpdateTemplateDto {
+  @IsString()
+  @MinLength(1)
+  @MaxLength(80)
+  name!: string;
+}

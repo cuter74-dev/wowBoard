@@ -54,6 +54,14 @@ export function TemplatePicker() {
     }
   };
 
+  const rename = async (e: React.MouseEvent, t: UserTemplate) => {
+    e.stopPropagation();
+    const name = window.prompt('템플릿 이름 수정', t.name);
+    if (!name || name === t.name) return;
+    await api.updateTemplate(t.id, name);
+    await load();
+  };
+
   const remove = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (!window.confirm('이 템플릿을 삭제할까요?')) return;
@@ -84,6 +92,9 @@ export function TemplatePicker() {
               <span className="tpl-right">
                 <span className="tpl-size">
                   {t.width}×{t.height}
+                </span>
+                <span className="tpl-del" onClick={(e) => void rename(e, t)} title="이름 수정">
+                  ✎
                 </span>
                 <span className="tpl-del" onClick={(e) => void remove(e, t.id)} title="삭제">
                   ✕

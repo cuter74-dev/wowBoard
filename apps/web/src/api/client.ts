@@ -135,6 +135,11 @@ export const api = {
       method: 'POST',
       body: JSON.stringify(data),
     }),
+  updateTemplate: (id: string, name: string) =>
+    request<UserTemplate>(`/templates/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ name }),
+    }),
   deleteTemplate: (id: string) =>
     request<{ ok: boolean }>(`/templates/${id}`, { method: 'DELETE' }),
 
