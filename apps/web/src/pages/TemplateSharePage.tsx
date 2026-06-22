@@ -4,6 +4,7 @@ import type { ElementInput } from '@wowboard/shared';
 import { api } from '../api/client';
 import { useAuth } from '../auth/AuthContext';
 import { ElementRenderer } from '../editor/ElementRenderer';
+import { Brand } from '../components/Brand';
 
 interface Shared {
   name: string;
@@ -45,7 +46,7 @@ export function TemplateSharePage() {
   return (
     <div className="editor">
       <div className="topbar">
-        <span className="brand">wowBoard</span>
+        <Brand />
         <span style={{ fontWeight: 600 }}>공유 템플릿: {tpl.name}</span>
         <div className="right">
           {loading ? null : user ? (

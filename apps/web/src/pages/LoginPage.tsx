@@ -39,7 +39,7 @@ export function LoginPage() {
   return (
     <div className="login-wrap">
       <div className="login-card">
-        <h1>wowBoard</h1>
+        <img src="/wowBoardLogo.png" className="login-logo" alt="wowBoard" />
         <p>화면 기획서를 빠르게 그리는 가장 쉬운 방법</p>
         {PROVIDERS.map((p) => (
           <a key={p.key} className={`social-btn ${p.cls}`} href={api.loginUrl(p.key)}>

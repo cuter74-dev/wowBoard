@@ -1,3 +1,4 @@
+import { Brand } from '../components/Brand';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import type { ProjectDetail, ScreenWithElements } from '../api/client';
@@ -30,7 +31,7 @@ export function SharePage() {
   return (
     <div className="editor">
       <div className="topbar">
-        <span className="brand">wowBoard</span>
+        <Brand />
         <span style={{ fontWeight: 600 }}>{project.title} (읽기 전용)</span>
         <span style={{ fontSize: 13, color: 'var(--muted)' }}>공유 보기</span>
       </div>

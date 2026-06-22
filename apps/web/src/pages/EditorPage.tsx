@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { api } from '../api/client';
 import { useEditor } from '../editor/store';
 import { Palette } from '../editor/Palette';
 import { ToolsPanel } from '../editor/ToolsPanel';
 import { copyToClipboard } from '../util/clipboard';
+import { Brand } from '../components/Brand';
 import { Canvas } from '../editor/Canvas';
 import { PropertiesPanel } from '../editor/PropertiesPanel';
 import { ScreenTabs } from '../editor/ScreenTabs';
@@ -88,9 +89,7 @@ export function EditorPage() {
     <div className="editor">
       <div className="topbar">
         <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-          <Link to="/" className="brand">
-            wowBoard
-          </Link>
+          <Brand />
           <TitleEditor />
         </div>
         <div className="right">

@@ -7,6 +7,11 @@
   --primary: #2563eb;
   --primary-hover: #1d4ed8;
   --danger: #dc2626;
+  /* brand palette (from logo) */
+  --navy: #0d1b2c;
+  --navy-2: #13263b;
+  --navy-line: #20384f;
+  --accent: #22d3ee; /* neon cyan */
 }
 
 * {
@@ -46,19 +51,25 @@ button {
   align-items: center;
   justify-content: center;
   height: 100%;
+  background:
+    radial-gradient(1100px 560px at 50% -8%, #16314c 0%, #0b1626 46%, #070d18 100%);
 }
 .login-card {
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 40px;
+  padding: 36px 40px 40px;
   width: 360px;
   text-align: center;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
-.login-card h1 {
-  margin: 0 0 8px;
-  font-size: 28px;
+.login-logo {
+  width: 128px;
+  height: 128px;
+  object-fit: contain;
+  border-radius: 22px;
+  display: block;
+  margin: 0 auto 10px;
 }
 .login-card p {
   color: var(--muted);
@@ -102,27 +113,61 @@ button {
 }
 .divider span { padding: 0 10px; }
 
-/* ───────── Top bar ───────── */
+/* ───────── Top bar (navy brand) ───────── */
 .topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 16px;
   height: 56px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
+  background: var(--navy);
+  color: #e2e8f0;
+  border-bottom: 1px solid var(--navy-line);
+  box-shadow: 0 1px 0 rgba(34, 211, 238, 0.18);
 }
-.topbar .brand {
-  font-weight: 800;
-  font-size: 18px;
-  color: var(--primary);
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   text-decoration: none;
 }
+.brand-logo {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  border-radius: 7px;
+}
+.brand-text {
+  font-weight: 800;
+  font-size: 18px;
+  color: #f1f5f9;
+  letter-spacing: -0.01em;
+}
+.brand-accent { color: var(--accent); }
 .topbar .right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
+/* dark-topbar control overrides */
+.topbar .btn {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--navy-line);
+  color: #cbd5e1;
+}
+.topbar .btn:hover { background: rgba(255, 255, 255, 0.13); }
+.topbar .btn.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+}
+.topbar .btn.primary:hover { background: var(--primary-hover); }
+.topbar .btn.danger { color: #fca5a5; border-color: #5b2a2a; background: transparent; }
+.topbar input { color: var(--text); }
+.topbar .save-status { color: #94a3b8; }
+.topbar .save-status.saving { color: #fbbf24; }
+.topbar .save-status.saved { color: #34d399; }
+.topbar .save-status.error { color: #f87171; }
 .avatar {
   width: 32px;
   height: 32px;

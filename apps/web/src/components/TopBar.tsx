@@ -1,5 +1,6 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext';
+import { Brand } from './Brand';
 import type { ReactNode } from 'react';
 
 export function TopBar({ children }: { children?: ReactNode }) {
@@ -13,9 +14,7 @@ export function TopBar({ children }: { children?: ReactNode }) {
 
   return (
     <div className="topbar">
-      <Link to="/" className="brand">
-        wowBoard
-      </Link>
+      <Brand />
       <div className="right">
         {children}
         <NavLink to="/settings" className="btn small">
