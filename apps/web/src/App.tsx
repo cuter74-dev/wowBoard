@@ -5,6 +5,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { EditorPage } from './pages/EditorPage';
 import { SharePage } from './pages/SharePage';
 import { SettingsPage } from './pages/SettingsPage';
+import { TemplateSharePage } from './pages/TemplateSharePage';
 import type { ReactNode } from 'react';
 
 function Protected({ children }: { children: ReactNode }) {
@@ -19,6 +20,7 @@ export function App() {
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route path="/share/:token" element={<SharePage />} />
+      <Route path="/template/:token" element={<TemplateSharePage />} />
       <Route
         path="/"
         element={

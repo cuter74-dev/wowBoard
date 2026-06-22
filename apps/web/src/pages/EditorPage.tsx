@@ -4,6 +4,7 @@ import { api } from '../api/client';
 import { useEditor } from '../editor/store';
 import { Palette } from '../editor/Palette';
 import { ToolsPanel } from '../editor/ToolsPanel';
+import { copyToClipboard } from '../util/clipboard';
 import { Canvas } from '../editor/Canvas';
 import { PropertiesPanel } from '../editor/PropertiesPanel';
 import { ScreenTabs } from '../editor/ScreenTabs';
@@ -222,15 +223,15 @@ function ShareButton() {
   const onShare = async () => {
     if (!projectId) return;
     if (shareToken) {
-      await navigator.clipboard.writeText(shareUrl!).catch(() => {});
-      window.alert('공유 링크가 복사되었습니다:\n' + shareUrl);
+      const ok = await copyToClipboard(shareUrl!);
+      window.alert((ok ? '공유 링크가 복사되었습니다:' : '공유 링크입니다:') + '\n' + shareUrl);
       return;
     }
     const res = await api.enableShare(projectId);
     setShareToken(res.shareToken);
     const url = `${window.location.origin}/share/${res.shareToken}`;
-    await navigator.clipboard.writeText(url).catch(() => {});
-    window.alert('공유가 활성화되어 링크를 복사했습니다:\n' + url);
+    const ok = await copyToClipboard(url);
+    window.alert((ok ? '공유가 활성화되어 링크를 복사했습니다:' : '공유가 활성화되었습니다:') + '\n' + url);
   };
 
   const onDisable = async () => {

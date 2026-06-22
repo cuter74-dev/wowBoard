@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SCREEN_TEMPLATES, type ScreenTemplate } from '@wowboard/shared';
 import { api, type UserTemplate } from '../api/client';
+import { copyToClipboard } from '../util/clipboard';
 import { useEditor } from './store';
 
 export function TemplatePicker() {
@@ -62,6 +63,18 @@ export function TemplatePicker() {
     await load();
   };
 
+  const share = async (e: React.MouseEvent, t: UserTemplate) => {
+    e.stopPropagation();
+    const res = await api.shareTemplate(t.id);
+    const url = `${window.location.origin}/template/${res.shareToken}`;
+    const ok = await copyToClipboard(url);
+    window.alert(
+      (ok ? '공유 링크가 복사되었습니다.' : '공유 링크입니다 (복사해서 사용하세요).') +
+        ' 다른 계정에서 열어 가져올 수 있어요:\n' +
+        url,
+    );
+  };
+
   const remove = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
     if (!window.confirm('이 템플릿을 삭제할까요?')) return;
@@ -92,6 +105,9 @@ export function TemplatePicker() {
               <span className="tpl-right">
                 <span className="tpl-size">
                   {t.width}×{t.height}
+                </span>
+                <span className="tpl-del" onClick={(e) => void share(e, t)} title="공유 링크 복사">
+                  🔗
                 </span>
                 <span className="tpl-del" onClick={(e) => void rename(e, t)} title="이름 수정">
                   ✎

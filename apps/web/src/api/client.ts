@@ -142,6 +142,16 @@ export const api = {
     }),
   deleteTemplate: (id: string) =>
     request<{ ok: boolean }>(`/templates/${id}`, { method: 'DELETE' }),
+  shareTemplate: (id: string) =>
+    request<{ shareToken: string }>(`/templates/${id}/share`, { method: 'POST' }),
+  unshareTemplate: (id: string) =>
+    request<{ ok: boolean }>(`/templates/${id}/share`, { method: 'DELETE' }),
+  getSharedTemplate: (token: string) =>
+    request<{ name: string; width: number; height: number; elements: ElementInput[] }>(
+      `/templates/shared/${token}`,
+    ),
+  importTemplate: (token: string) =>
+    request<UserTemplate>(`/templates/import/${token}`, { method: 'POST' }),
 
   // ai
   getAiProviders: () => request<AiProviderKind[]>('/ai/providers'),

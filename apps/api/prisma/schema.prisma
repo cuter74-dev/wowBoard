@@ -31,14 +31,15 @@ model User {
 }
 
 model Template {
-  id        String   @id @default(cuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name      String
-  width     Int
-  height    Int
-  elements  Json
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name       String
+  width      Int
+  height     Int
+  elements   Json
+  shareToken String?  @unique
+  createdAt  DateTime @default(now())
 
   @@index([userId])
 }
