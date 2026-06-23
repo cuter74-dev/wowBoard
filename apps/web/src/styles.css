@@ -562,6 +562,15 @@ button {
   padding: 2px 0;
 }
 .film-count { color: var(--muted); font-weight: 400; }
+.film-head-left { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.film-drag {
+  cursor: grab;
+  color: var(--muted);
+  font-size: 13px;
+  padding: 0 2px;
+  user-select: none;
+}
+.film-drag:active { cursor: grabbing; }
 .film-group-actions { display: flex; gap: 4px; }
 .film-mini {
   border: 1px solid var(--border);

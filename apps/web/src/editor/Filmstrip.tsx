@@ -15,10 +15,12 @@ export function Filmstrip() {
   const addGroup = useEditor((s) => s.addGroup);
   const renameGroup = useEditor((s) => s.renameGroup);
   const removeGroup = useEditor((s) => s.removeGroup);
+  const moveGroup = useEditor((s) => s.moveGroup);
   const setScreenGroup = useEditor((s) => s.setScreenGroup);
 
   const [collapsed, setCollapsed] = useState<Set<string>>(new Set());
-  const dragId = useRef<string | null>(null);
+  const dragId = useRef<string | null>(null); // screen being dragged
+  const dragGroupId = useRef<string | null>(null); // group being dragged
 
   const screensOf = (gid: string | null): ScreenWithElements[] =>
     screens
@@ -67,6 +69,16 @@ export function Filmstrip() {
     await api.deleteScreen(id);
   };
 
+  // Reorder groups: drop the dragged group at the target group's position.
+  const onGroupDrop = async (overId: string | null) => {
+    const id = dragGroupId.current;
+    dragGroupId.current = null;
+    if (!id || id === overId) return;
+    moveGroup(id, overId);
+    const ordered = useEditor.getState().groups;
+    await Promise.all(ordered.map((g, i) => api.updateGroup(g.id, { order: i })));
+  };
+
   // Move dragged screen into targetGroup at targetIndex, then reindex + persist.
   const applyMove = async (targetGroupId: string | null, targetIndex: number) => {
     const id = dragId.current;
@@ -93,24 +105,41 @@ export function Filmstrip() {
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault();
-              void applyMove(sec.id, sec.screens.length);
+              if (dragGroupId.current) void onGroupDrop(sec.id);
+              else void applyMove(sec.id, sec.screens.length);
             }}
           >
             <div className="film-group-head">
-              <button
-                className="film-collapse"
-                onClick={() =>
-                  sec.id != null &&
-                  setCollapsed((c) => {
-                    const n = new Set(c);
-                    n.has(sec.id!) ? n.delete(sec.id!) : n.add(sec.id!);
-                    return n;
-                  })
-                }
-              >
-                {sec.id == null ? '•' : isCollapsed ? '▸' : '▾'} {sec.name}{' '}
-                <span className="film-count">({sec.screens.length})</span>
-              </button>
+              <span className="film-head-left">
+                {sec.id != null && (
+                  <span
+                    className="film-drag"
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'move';
+                      dragGroupId.current = sec.id;
+                      dragId.current = null;
+                    }}
+                    title="드래그하여 그룹 순서 변경"
+                  >
+                    ⠿
+                  </span>
+                )}
+                <button
+                  className="film-collapse"
+                  onClick={() =>
+                    sec.id != null &&
+                    setCollapsed((c) => {
+                      const n = new Set(c);
+                      n.has(sec.id!) ? n.delete(sec.id!) : n.add(sec.id!);
+                      return n;
+                    })
+                  }
+                >
+                  {sec.id == null ? '•' : isCollapsed ? '▸' : '▾'} {sec.name}{' '}
+                  <span className="film-count">({sec.screens.length})</span>
+                </button>
+              </span>
               <span className="film-group-actions">
                 <button className="film-mini" onClick={() => void onAddScreen(sec.id)} title="이 그룹에 화면 추가">
                   + 화면

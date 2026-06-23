@@ -64,6 +64,7 @@ interface EditorState {
   addGroup: (group: ScreenGroup) => void;
   renameGroup: (id: string, name: string) => void;
   removeGroup: (id: string) => void;
+  moveGroup: (dragId: string, overId: string | null) => void;
   setScreenGroup: (screenId: string, groupId: string | null, order: number) => void;
 
   activeScreen: () => ScreenWithElements | undefined;
@@ -343,6 +344,18 @@ export const useEditor = create<EditorState>((set, get) => {
         // its screens fall back to ungrouped
         screens: st.screens.map((s) => (s.groupId === id ? { ...s, groupId: null } : s)),
       })),
+
+    moveGroup: (dragId, overId) =>
+      set((st) => {
+        const list = [...st.groups].sort((a, b) => a.order - b.order);
+        const from = list.findIndex((g) => g.id === dragId);
+        if (from < 0) return {};
+        const [moved] = list.splice(from, 1);
+        let to = overId ? list.findIndex((g) => g.id === overId) : list.length;
+        if (to < 0) to = list.length;
+        list.splice(to, 0, moved);
+        return { groups: list.map((g, i) => ({ ...g, order: i })) };
+      }),
 
     setScreenGroup: (screenId, groupId, order) =>
       set((st) => ({
