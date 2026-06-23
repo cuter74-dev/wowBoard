@@ -66,32 +66,47 @@ model AiCredential {
 }
 
 model Project {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   ownerId       String
-  owner         User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  owner         User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   title         String
   description   String?
-  shareToken    String?  @unique
-  defaultWidth  Int      @default(390)
-  defaultHeight Int      @default(844)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  shareToken    String?       @unique
+  defaultWidth  Int           @default(390)
+  defaultHeight Int           @default(844)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   screens       Screen[]
+  groups        ScreenGroup[]
 
   @@index([ownerId])
 }
 
-model Screen {
-  id        String    @id @default(cuid())
+model ScreenGroup {
+  id        String   @id @default(cuid())
   projectId String
-  project   Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   name      String
-  order     Int       @default(0)
-  width     Int       @default(390)
-  height    Int       @default(844)
+  order     Int      @default(0)
+  screens   Screen[]
+
+  @@index([projectId])
+}
+
+model Screen {
+  id        String       @id @default(cuid())
+  projectId String
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  groupId   String?
+  group     ScreenGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  name      String
+  order     Int          @default(0)
+  width     Int          @default(390)
+  height    Int          @default(844)
   elements  Element[]
 
   @@index([projectId])
+  @@index([groupId])
 }
 
 model Element {

@@ -8,6 +8,7 @@ import { ScreensModule } from './screens/screens.module';
 import { ShareModule } from './share/share.module';
 import { AiModule } from './ai/ai.module';
 import { TemplatesModule } from './templates/templates.module';
+import { GroupsModule } from './groups/groups.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { TemplatesModule } from './templates/templates.module';
     ShareModule,
     AiModule,
     TemplatesModule,
+    GroupsModule,
   ],
 })
 export class AppModule {}

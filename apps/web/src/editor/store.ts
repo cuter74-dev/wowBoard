@@ -4,6 +4,7 @@ import type {
   ElementType,
   ElementProps,
   ElementInput,
+  ScreenGroup,
   PaletteItem,
 } from '@wowboard/shared';
 import type { ProjectDetail, ScreenWithElements } from '../api/client';
@@ -19,6 +20,7 @@ interface EditorState {
   defaultWidth: number;
   defaultHeight: number;
   screens: ScreenWithElements[];
+  groups: ScreenGroup[];
   activeScreenId: string | null;
   selectedId: string | null;
   saveStatus: SaveStatus;
@@ -57,6 +59,12 @@ interface EditorState {
   renameScreen: (id: string, name: string) => void;
   setScreenSize: (id: string, size: { width?: number; height?: number }) => void;
   moveScreen: (dragId: string, overId: string) => void;
+
+  // groups
+  addGroup: (group: ScreenGroup) => void;
+  renameGroup: (id: string, name: string) => void;
+  removeGroup: (id: string) => void;
+  setScreenGroup: (screenId: string, groupId: string | null, order: number) => void;
 
   activeScreen: () => ScreenWithElements | undefined;
 }
@@ -115,6 +123,7 @@ export const useEditor = create<EditorState>((set, get) => {
     defaultWidth: 390,
     defaultHeight: 844,
     screens: [],
+    groups: [],
     activeScreenId: null,
     selectedId: null,
     saveStatus: 'idle',
@@ -131,6 +140,7 @@ export const useEditor = create<EditorState>((set, get) => {
         defaultWidth: project.defaultWidth ?? 390,
         defaultHeight: project.defaultHeight ?? 844,
         screens: (project.screens ?? []) as ScreenWithElements[],
+        groups: project.groups ?? [],
         activeScreenId: project.screens?.[0]?.id ?? null,
         selectedId: null,
         saveStatus: 'idle',
@@ -317,6 +327,29 @@ export const useEditor = create<EditorState>((set, get) => {
         list.splice(to, 0, moved);
         return { screens: list.map((s, i) => ({ ...s, order: i })) };
       }),
+
+    // ───────── groups ─────────
+    addGroup: (group) =>
+      set((st) => ({ groups: [...st.groups, group] })),
+
+    renameGroup: (id, name) =>
+      set((st) => ({
+        groups: st.groups.map((g) => (g.id === id ? { ...g, name } : g)),
+      })),
+
+    removeGroup: (id) =>
+      set((st) => ({
+        groups: st.groups.filter((g) => g.id !== id),
+        // its screens fall back to ungrouped
+        screens: st.screens.map((s) => (s.groupId === id ? { ...s, groupId: null } : s)),
+      })),
+
+    setScreenGroup: (screenId, groupId, order) =>
+      set((st) => ({
+        screens: st.screens.map((s) =>
+          s.id === screenId ? { ...s, groupId, order } : s,
+        ),
+      })),
 
     activeScreen: () => {
       const { screens, activeScreenId } = get();

@@ -531,6 +531,97 @@ button {
 }
 .tab.active { border-color: var(--primary); color: var(--primary); font-weight: 600; }
 
+/* ───────── Filmstrip (PowerPoint-style thumbnails + groups) ───────── */
+.filmstrip {
+  flex-shrink: 0;
+  max-height: 244px;
+  overflow-y: auto;
+  border-top: 1px solid var(--border);
+  background: var(--panel);
+  padding: 8px 10px;
+}
+.film-group {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+}
+.film-group-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.film-collapse {
+  border: none;
+  background: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  cursor: pointer;
+  padding: 2px 0;
+}
+.film-count { color: var(--muted); font-weight: 400; }
+.film-group-actions { display: flex; gap: 4px; }
+.film-mini {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 5px;
+  font-size: 11px;
+  padding: 2px 6px;
+  color: var(--muted);
+}
+.film-mini:hover { border-color: var(--primary); color: var(--primary); }
+.film-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  align-items: flex-start;
+}
+.thumb {
+  flex-shrink: 0;
+  cursor: pointer;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  padding: 2px;
+}
+.thumb:hover { border-color: #cbd5e1; }
+.thumb.active { border-color: var(--primary); }
+.thumb-frame {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: #fff;
+}
+.thumb-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  width: 108px;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+.thumb-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.thumb-del { color: var(--muted); cursor: pointer; flex-shrink: 0; }
+.thumb-del:hover { color: var(--danger); }
+.film-add-empty,
+.film-add-group {
+  border: 1px dashed var(--border);
+  background: none;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+}
+.film-add-empty { padding: 18px 16px; align-self: center; }
+.film-add-group { padding: 6px 12px; width: 100%; }
+.film-add-group:hover,
+.film-add-empty:hover { border-color: var(--primary); color: var(--primary); }
+
 .tpl-size { color: var(--muted); font-size: 11px; }
 .tab[draggable='true'] { cursor: grab; }
 .tab.dragging { opacity: 0.4; }

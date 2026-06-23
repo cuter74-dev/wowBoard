@@ -55,7 +55,14 @@ export interface Screen {
   order: number;
   width: number;
   height: number;
+  groupId?: string | null;
   elements?: CanvasElement[];
+}
+
+export interface ScreenGroup {
+  id: string;
+  name: string;
+  order: number;
 }
 
 export interface Project {

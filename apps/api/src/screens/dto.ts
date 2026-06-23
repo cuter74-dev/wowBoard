@@ -26,6 +26,10 @@ export class CreateScreenDto {
   @IsInt()
   @Min(50)
   height?: number;
+
+  @IsOptional()
+  @IsString()
+  groupId?: string;
 }
 
 export class UpdateScreenDto {
@@ -49,6 +53,11 @@ export class UpdateScreenDto {
   @IsInt()
   @Min(50)
   height?: number;
+
+  // move to another group (null/'' = ungrouped)
+  @IsOptional()
+  @IsString()
+  groupId?: string | null;
 }
 
 export class ElementInputDto {

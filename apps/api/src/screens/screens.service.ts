@@ -18,11 +18,16 @@ export class ScreensService {
       where: { id: projectId },
       select: { defaultWidth: true, defaultHeight: true },
     });
-    const count = await this.prisma.screen.count({ where: { projectId } });
+    // order within the target group (or whole project if ungrouped)
+    const count = await this.prisma.screen.count({
+      where: { projectId, groupId: dto.groupId ?? null },
+    });
+    const total = await this.prisma.screen.count({ where: { projectId } });
     return this.prisma.screen.create({
       data: {
         projectId,
-        name: dto.name ?? `화면 ${count + 1}`,
+        groupId: dto.groupId ?? null,
+        name: dto.name ?? `화면 ${total + 1}`,
         order: count,
         width: dto.width ?? project?.defaultWidth ?? 390,
         height: dto.height ?? project?.defaultHeight ?? 844,
@@ -33,7 +38,21 @@ export class ScreensService {
 
   async update(ownerId: string, screenId: string, dto: UpdateScreenDto) {
     await this.assertScreenOwner(ownerId, screenId);
-    return this.prisma.screen.update({ where: { id: screenId }, data: dto });
+    const data: {
+      name?: string;
+      order?: number;
+      width?: number;
+      height?: number;
+      groupId?: string | null;
+    } = {
+      name: dto.name,
+      order: dto.order,
+      width: dto.width,
+      height: dto.height,
+    };
+    // '' / null → ungrouped
+    if (dto.groupId !== undefined) data.groupId = dto.groupId || null;
+    return this.prisma.screen.update({ where: { id: screenId }, data });
   }
 
   async remove(ownerId: string, screenId: string) {

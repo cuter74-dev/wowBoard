@@ -19,29 +19,39 @@ export class ProjectsService {
   }
 
   async create(ownerId: string, dto: CreateProjectDto) {
-    // Every new project starts with one empty screen, sized to the project default.
+    // Every new project starts with one default group holding one empty screen.
     const width = dto.width ?? 390;
     const height = dto.height ?? 844;
-    return this.prisma.project.create({
+    const project = await this.prisma.project.create({
       data: {
         ownerId,
         title: dto.title,
         description: dto.description,
         defaultWidth: width,
         defaultHeight: height,
-        screens: {
-          create: { name: '화면 1', order: 0, width, height },
-        },
+        groups: { create: { name: '그룹 1', order: 0 } },
       },
-      include: { screens: true },
+      include: { groups: true },
     });
+    await this.prisma.screen.create({
+      data: {
+        projectId: project.id,
+        groupId: project.groups[0].id,
+        name: '화면 1',
+        order: 0,
+        width,
+        height,
+      },
+    });
+    return this.getOwned(ownerId, project.id);
   }
 
-  /** Fetch a project the user owns, with full screen + element tree. */
+  /** Fetch a project the user owns, with full screen + element tree + groups. */
   async getOwned(ownerId: string, id: string) {
     const project = await this.prisma.project.findUnique({
       where: { id },
       include: {
+        groups: { orderBy: { order: 'asc' } },
         screens: {
           orderBy: { order: 'asc' },
           include: { elements: true },

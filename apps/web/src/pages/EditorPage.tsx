@@ -8,7 +8,7 @@ import { copyToClipboard } from '../util/clipboard';
 import { Brand } from '../components/Brand';
 import { Canvas } from '../editor/Canvas';
 import { PropertiesPanel } from '../editor/PropertiesPanel';
-import { ScreenTabs } from '../editor/ScreenTabs';
+import { Filmstrip } from '../editor/Filmstrip';
 
 export function EditorPage() {
   const { id } = useParams<{ id: string }>();
@@ -128,7 +128,7 @@ export function EditorPage() {
         )}
       </div>
 
-      <ScreenTabs />
+      <Filmstrip />
     </div>
   );
 }

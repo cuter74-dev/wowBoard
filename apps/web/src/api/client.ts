@@ -3,6 +3,7 @@ import type {
   ElementInput,
   Project,
   Screen,
+  ScreenGroup,
   User,
   AiProviderKind,
 } from '@wowboard/shared';
@@ -63,7 +64,7 @@ export interface ProjectListItem extends Project {
   _count?: { screens: number };
 }
 
-export type ProjectDetail = Project & { screens: Screen[] };
+export type ProjectDetail = Project & { screens: Screen[]; groups: ScreenGroup[] };
 export type ScreenWithElements = Screen & { elements: CanvasElement[] };
 
 export const api = {
@@ -93,18 +94,35 @@ export const api = {
     request<{ ok: boolean }>(`/projects/${id}`, { method: 'DELETE' }),
 
   // screens
-  createScreen: (projectId: string, name?: string) =>
+  createScreen: (projectId: string, name?: string, groupId?: string | null) =>
     request<ScreenWithElements>(`/projects/${projectId}/screens`, {
       method: 'POST',
-      body: JSON.stringify({ name }),
+      body: JSON.stringify({ name, groupId: groupId ?? undefined }),
     }),
-  updateScreen: (id: string, data: Partial<Pick<Screen, 'name' | 'order' | 'width' | 'height'>>) =>
+  updateScreen: (
+    id: string,
+    data: Partial<Pick<Screen, 'name' | 'order' | 'width' | 'height' | 'groupId'>>,
+  ) =>
     request<Screen>(`/screens/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(data),
     }),
   deleteScreen: (id: string) =>
     request<{ ok: boolean }>(`/screens/${id}`, { method: 'DELETE' }),
+
+  // screen groups
+  createGroup: (projectId: string, name: string) =>
+    request<ScreenGroup>(`/projects/${projectId}/groups`, {
+      method: 'POST',
+      body: JSON.stringify({ name }),
+    }),
+  updateGroup: (id: string, data: { name?: string; order?: number }) =>
+    request<ScreenGroup>(`/groups/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
+  deleteGroup: (id: string) =>
+    request<{ ok: boolean }>(`/groups/${id}`, { method: 'DELETE' }),
   putElements: (screenId: string, elements: Omit<CanvasElement, 'id'>[]) =>
     request<ScreenWithElements>(`/screens/${screenId}/elements`, {
       method: 'PUT',
