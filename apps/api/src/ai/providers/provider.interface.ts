@@ -5,8 +5,13 @@ export interface ScreenSize {
   height: number;
 }
 
+export interface RefImage {
+  data: string; // base64, no data: prefix
+  mime: string;
+}
+
 export interface AiGenProvider {
-  generate(prompt: string, screen: ScreenSize): Promise<AiRawOutput>;
+  generate(prompt: string, screen: ScreenSize, image?: RefImage): Promise<AiRawOutput>;
   fromImage(imageB64: string, mime: string, screen: ScreenSize): Promise<AiRawOutput>;
 }
 

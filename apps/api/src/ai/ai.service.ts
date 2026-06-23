@@ -74,12 +74,20 @@ export class AiService {
     kind: AiProviderKind,
     prompt: string,
     size: { width: number; height: number },
-    opts?: { mode?: 'add' | 'edit'; current?: ElementInput[] },
+    opts?: {
+      mode?: 'add' | 'edit';
+      current?: ElementInput[];
+      image?: { data: string; mime: string };
+    },
   ): Promise<SanitizedScreen> {
     const cred = await this.credentials.resolve(userId, kind);
-    const finalPrompt = this.composePrompt(prompt, opts?.mode ?? 'add', opts?.current);
+    let finalPrompt = this.composePrompt(prompt, opts?.mode ?? 'add', opts?.current);
+    if (opts?.image) {
+      finalPrompt +=
+        '\n\nA reference image is attached. Use it as a visual reference for the layout/style.';
+    }
     try {
-      const raw = await this.build(cred).generate(finalPrompt, size);
+      const raw = await this.build(cred).generate(finalPrompt, size, opts?.image);
       return sanitize(raw, size);
     } catch (err) {
       this.wrap(err, cred);

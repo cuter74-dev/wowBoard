@@ -64,7 +64,14 @@ export class AiController {
         width: dto.width ?? DEFAULT_SCREEN.width,
         height: dto.height ?? DEFAULT_SCREEN.height,
       },
-      { mode: dto.mode ?? 'add', current: dto.current },
+      {
+        mode: dto.mode ?? 'add',
+        current: dto.current,
+        image:
+          dto.imageBase64 && dto.mime
+            ? { data: dto.imageBase64, mime: dto.mime }
+            : undefined,
+      },
     );
   }
 

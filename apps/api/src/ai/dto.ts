@@ -55,6 +55,17 @@ export class GenerateDto {
   @IsOptional()
   @IsArray()
   current?: ElementInput[];
+
+  // Optional reference image (base64, no data: prefix) + mime.
+  @IsOptional()
+  @IsString()
+  @MaxLength(11_000_000)
+  imageBase64?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['image/png', 'image/jpeg', 'image/webp', 'image/gif'])
+  mime?: string;
 }
 
 export class FromImageDto {

@@ -8,6 +8,7 @@ import {
 import {
   type AiGenProvider,
   type ScreenSize,
+  type RefImage,
   parseJsonLoose,
   schemaHint,
 } from './provider.interface';
@@ -23,10 +24,12 @@ export class GeminiProvider implements AiGenProvider {
     });
   }
 
-  async generate(prompt: string, screen: ScreenSize): Promise<AiRawOutput> {
-    const res = await this.model.generateContent(
-      `${this.system}\n\nScreen size: ${screen.width}x${screen.height}.\nRequest: ${prompt}`,
-    );
+  async generate(prompt: string, screen: ScreenSize, image?: RefImage): Promise<AiRawOutput> {
+    const text = `${this.system}\n\nScreen size: ${screen.width}x${screen.height}.\nRequest: ${prompt}`;
+    const parts: (string | { inlineData: { mimeType: string; data: string } })[] = image
+      ? [text, { inlineData: { mimeType: image.mime, data: image.data } }]
+      : [text];
+    const res = await this.model.generateContent(parts);
     return parseJsonLoose(res.response.text());
   }
 

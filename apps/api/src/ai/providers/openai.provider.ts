@@ -8,6 +8,7 @@ import {
 import {
   type AiGenProvider,
   type ScreenSize,
+  type RefImage,
   parseJsonLoose,
   schemaHint,
 } from './provider.interface';
@@ -93,8 +94,13 @@ export class OpenAiProvider implements AiGenProvider {
     return parseJsonLoose(text);
   }
 
-  generate(prompt: string, screen: ScreenSize): Promise<AiRawOutput> {
-    return this.run(`Screen size: ${screen.width}x${screen.height}.\nRequest: ${prompt}`);
+  generate(prompt: string, screen: ScreenSize, image?: RefImage): Promise<AiRawOutput> {
+    const text = `Screen size: ${screen.width}x${screen.height}.\nRequest: ${prompt}`;
+    if (!image) return this.run(text);
+    return this.run([
+      { type: 'text', text },
+      { type: 'image_url', image_url: { url: `data:${image.mime};base64,${image.data}` } },
+    ]);
   }
 
   fromImage(imageB64: string, mime: string, screen: ScreenSize): Promise<AiRawOutput> {

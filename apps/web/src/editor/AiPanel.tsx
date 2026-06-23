@@ -10,16 +10,27 @@ const SIZE_PRESETS = [
   { label: '데스크톱 (1280×800)', width: 1280, height: 800 },
 ];
 
+function readDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(String(r.result));
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
 export function AiPanel() {
   const [providers, setProviders] = useState<AiProviderKind[]>([]);
   const [provider, setProvider] = useState<AiProviderKind | ''>('');
   const [prompt, setPrompt] = useState('');
   const [mode, setMode] = useState<'add' | 'edit'>('add');
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [refImage, setRefImage] = useState<File | null>(null);
   const [sizeIdx, setSizeIdx] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const fileRef = useRef<HTMLInputElement>(null);
+  const refInputRef = useRef<HTMLInputElement>(null);
 
   const projectId = useEditor((s) => s.projectId);
   const activeScreen = useEditor((s) => s.activeScreen());
@@ -45,21 +56,33 @@ export function AiPanel() {
 
   const labelOf = (k: AiProviderKind) => AI_PROVIDERS.find((p) => p.kind === k)?.label ?? k;
 
+  const clearRef = () => {
+    setRefImage(null);
+    if (refInputRef.current) refInputRef.current.value = '';
+  };
+
   const onGenerate = async () => {
-    if (!provider || !prompt.trim() || !activeScreen) return;
+    if (!provider || !activeScreen || (!prompt.trim() && !refImage)) return;
     setBusy(true);
     setError('');
     try {
       const current = activeScreen.elements.map(({ id: _id, ...rest }) => rest);
+      let img: { imageBase64?: string; mime?: string } = {};
+      if (refImage) {
+        const dataUrl = await readDataUrl(refImage);
+        img = { imageBase64: dataUrl.split(',')[1] ?? '', mime: refImage.type };
+      }
       const res = await api.aiGenerate(provider, prompt.trim(), {
         width: activeScreen.width,
         height: activeScreen.height,
         mode,
         current: current.length ? current : undefined,
+        ...img,
       });
       if (mode === 'edit') replaceElements(res.elements);
       else addElements(res.elements);
       setPrompt('');
+      clearRef();
     } catch (e) {
       setError((e as Error).message || '생성 실패');
     } finally {
@@ -145,18 +168,39 @@ export function AiPanel() {
             onChange={(e) => setPrompt(e.target.value)}
             placeholder={
               mode === 'edit'
-                ? '예: 로그인 버튼을 빨갛게, 입력칸 하나 더 추가'
-                : '예: 이메일/비밀번호 입력과 로그인 버튼이 있는 로그인 화면'
+                ? '예: 로그인 버튼을 빨갛게, 입력칸 하나 더 추가 / 이 이미지처럼 바꿔줘'
+                : '예: 로그인 화면 만들어줘 / 이 이미지처럼 비슷하게 만들어줘'
             }
             rows={3}
             className="ai-input"
             disabled={busy}
           />
+
+          <label className="ai-ref-label">
+            참고 이미지 (선택)
+            <input
+              ref={refInputRef}
+              type="file"
+              accept="image/*"
+              disabled={busy}
+              onChange={(e) => setRefImage(e.target.files?.[0] ?? null)}
+              style={{ fontSize: 11 }}
+            />
+          </label>
+          {refImage && (
+            <p className="ai-hint">
+              첨부: {refImage.name}{' '}
+              <span style={{ cursor: 'pointer', color: 'var(--danger)' }} onClick={clearRef}>
+                ✕
+              </span>
+            </p>
+          )}
+
           <button
             className="btn primary small"
             style={{ width: '100%' }}
             onClick={onGenerate}
-            disabled={busy || !prompt.trim()}
+            disabled={busy || (!prompt.trim() && !refImage)}
           >
             {busy ? '생성 중…' : mode === 'edit' ? '화면 수정' : '요소 추가'}
           </button>

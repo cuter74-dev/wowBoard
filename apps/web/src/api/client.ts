@@ -174,6 +174,8 @@ export const api = {
       height?: number;
       mode?: 'add' | 'edit';
       current?: ElementInput[];
+      imageBase64?: string;
+      mime?: string;
     },
   ) =>
     request<AiScreenResult>('/ai/generate', {
